@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/mpb.mp3-1a3e31ceae7bf172ad9af70a4a1c872f.mp3str"
+
+[deps]
+
+source_file="res://stimaddons/erowrite/mpb.mp3"
+dest_files=[ "res://.import/mpb.mp3-1a3e31ceae7bf172ad9af70a4a1c872f.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

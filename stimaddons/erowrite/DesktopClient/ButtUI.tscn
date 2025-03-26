@@ -1,0 +1,598 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://stimaddons/erowrite/lib/ButtplugClient.gd" type="Script" id=1]
+[ext_resource path="res://stimaddons/erowrite/DesktopClient/ButtUI.gd" type="Script" id=2]
+
+[sub_resource type="ButtonGroup" id=1]
+
+[sub_resource type="Gradient" id=2]
+colors = PoolColorArray( 0.266667, 1, 0, 1, 0.266667, 1, 0, 1 )
+
+[sub_resource type="GradientTexture" id=3]
+gradient = SubResource( 2 )
+width = 16
+
+[sub_resource type="Gradient" id=4]
+colors = PoolColorArray( 1, 0, 0, 1, 1, 0, 0, 1 )
+
+[sub_resource type="GradientTexture" id=5]
+gradient = SubResource( 4 )
+width = 16
+
+[sub_resource type="GDScript" id=6]
+script/source = "extends Node
+
+func _on_Client_device_found(device):
+	var l = Label.new()
+	l.text = device.device_name
+	l.set_meta(\"device\", device)
+	add_child(l)
+	
+func _on_Client_device_removed(device):
+	for d in get_children():
+		if d.get_meta(\"device\") == device:
+			d.queue_free()
+"
+
+[sub_resource type="GDScript" id=7]
+script/source = "extends ScrollContainer
+
+const panel = preload(\"./DevicePanel.tscn\")
+
+func _on_Client_device_found(device):
+	var p = panel.instance()
+	p.device = device
+	get_node(\"VBoxContainer/Devices\").add_child(p)
+
+func _on_Client_device_removed(device):
+	for d in get_node(\"VBoxContainer/Devices\").get_children():
+		if d.device == device:
+			d.queue_free()
+"
+
+[node name="ButtUI" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 2 )
+
+[node name="Client" type="Node" parent="."]
+script = ExtResource( 1 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Navigation" type="VBoxContainer" parent="HBoxContainer"]
+margin_right = 260.0
+margin_bottom = 670.0
+rect_min_size = Vector2( 260, 0 )
+
+[node name="Home" type="Button" parent="HBoxContainer/Navigation"]
+visible = false
+margin_right = 260.0
+margin_bottom = 20.0
+disabled = true
+toggle_mode = true
+pressed = true
+group = SubResource( 1 )
+text = "Home"
+align = 0
+
+[node name="ServerStatus" type="Button" parent="HBoxContainer/Navigation"]
+margin_right = 260.0
+margin_bottom = 20.0
+toggle_mode = true
+group = SubResource( 1 )
+text = "Server Status"
+align = 0
+
+[node name="Devices" type="Button" parent="HBoxContainer/Navigation"]
+margin_top = 24.0
+margin_right = 260.0
+margin_bottom = 44.0
+toggle_mode = true
+group = SubResource( 1 )
+text = "Devices"
+align = 0
+
+[node name="Settings" type="Button" parent="HBoxContainer/Navigation"]
+margin_top = 48.0
+margin_right = 260.0
+margin_bottom = 68.0
+toggle_mode = true
+group = SubResource( 1 )
+text = "Settings"
+align = 0
+
+[node name="Log" type="Button" parent="HBoxContainer/Navigation"]
+visible = false
+margin_top = 96.0
+margin_right = 260.0
+margin_bottom = 116.0
+disabled = true
+toggle_mode = true
+group = SubResource( 1 )
+text = "Log"
+align = 0
+
+[node name="View" type="VBoxContainer" parent="HBoxContainer"]
+margin_left = 264.0
+margin_right = 1024.0
+margin_bottom = 670.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/separation = 0
+
+[node name="Titlebar" type="PanelContainer" parent="HBoxContainer/View"]
+margin_right = 760.0
+margin_bottom = 30.0
+size_flags_horizontal = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/View/Titlebar"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 753.0
+margin_bottom = 23.0
+
+[node name="NavTitle" type="Label" parent="HBoxContainer/View/Titlebar/HBoxContainer"]
+margin_top = 1.0
+margin_right = 706.0
+margin_bottom = 15.0
+size_flags_horizontal = 3
+text = "Home"
+
+[node name="ServerStatus" type="TextureRect" parent="HBoxContainer/View/Titlebar/HBoxContainer"]
+margin_left = 710.0
+margin_right = 726.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 16, 16 )
+texture = SubResource( 3 )
+expand = true
+
+[node name="ConnectionStatus" type="TextureRect" parent="HBoxContainer/View/Titlebar/HBoxContainer"]
+margin_left = 730.0
+margin_right = 746.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 16, 16 )
+texture = SubResource( 5 )
+expand = true
+
+[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer/View"]
+margin_top = 30.0
+margin_right = 760.0
+margin_bottom = 670.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ServerStatus" type="ScrollContainer" parent="HBoxContainer/View/PanelContainer"]
+visible = false
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 753.0
+margin_bottom = 633.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/View/PanelContainer/ServerStatus"]
+margin_right = 746.0
+margin_bottom = 626.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/separation = 16
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/View/PanelContainer/ServerStatus/VBoxContainer"]
+margin_right = 746.0
+margin_bottom = 20.0
+
+[node name="StartServer" type="Button" parent="HBoxContainer/View/PanelContainer/ServerStatus/VBoxContainer/HBoxContainer"]
+margin_right = 85.0
+margin_bottom = 20.0
+size_flags_horizontal = 0
+text = "Start Server"
+
+[node name="Connect" type="Button" parent="HBoxContainer/View/PanelContainer/ServerStatus/VBoxContainer/HBoxContainer"]
+margin_left = 89.0
+margin_right = 153.0
+margin_bottom = 20.0
+size_flags_horizontal = 0
+text = "Connect"
+
+[node name="Devices" type="VBoxContainer" parent="HBoxContainer/View/PanelContainer/ServerStatus/VBoxContainer"]
+margin_top = 36.0
+margin_right = 746.0
+margin_bottom = 54.0
+
+[node name="DevicesHeader" type="Label" parent="HBoxContainer/View/PanelContainer/ServerStatus/VBoxContainer/Devices"]
+margin_right = 746.0
+margin_bottom = 14.0
+text = "Devices"
+
+[node name="DeviceList" type="VBoxContainer" parent="HBoxContainer/View/PanelContainer/ServerStatus/VBoxContainer/Devices"]
+margin_top = 18.0
+margin_right = 746.0
+margin_bottom = 18.0
+script = SubResource( 6 )
+
+[node name="Connection Types" type="VBoxContainer" parent="HBoxContainer/View/PanelContainer/ServerStatus/VBoxContainer"]
+margin_top = 70.0
+margin_right = 746.0
+margin_bottom = 118.0
+
+[node name="Label" type="Label" parent="HBoxContainer/View/PanelContainer/ServerStatus/VBoxContainer/Connection Types"]
+margin_right = 746.0
+margin_bottom = 14.0
+text = "Server Connection Types"
+
+[node name="RichCheckBox" type="HBoxContainer" parent="HBoxContainer/View/PanelContainer/ServerStatus/VBoxContainer/Connection Types"]
+margin_top = 18.0
+margin_right = 746.0
+margin_bottom = 48.0
+
+[node name="CheckBox" type="CheckBox" parent="HBoxContainer/View/PanelContainer/ServerStatus/VBoxContainer/Connection Types/RichCheckBox"]
+margin_right = 24.0
+margin_bottom = 30.0
+disabled = true
+pressed = true
+
+[node name="RichTextLabel" type="RichTextLabel" parent="HBoxContainer/View/PanelContainer/ServerStatus/VBoxContainer/Connection Types/RichCheckBox"]
+margin_left = 28.0
+margin_right = 746.0
+margin_bottom = 30.0
+size_flags_horizontal = 3
+bbcode_enabled = true
+bbcode_text = "[b]Websockets (on [All Interfaces]:12345) - Default, always on[/b]
+Used for local applications (games, movie sync, etc...), or web applications in Chrome/Firefox/Edge, etc...."
+text = "Websockets (on [All Interfaces]:12345) - Default, always on
+Used for local applications (games, movie sync, etc...), or web applications in Chrome/Firefox/Edge, etc...."
+fit_content_height = true
+scroll_active = false
+
+[node name="Device Communications" type="VBoxContainer" parent="HBoxContainer/View/PanelContainer/ServerStatus/VBoxContainer"]
+margin_top = 134.0
+margin_right = 746.0
+margin_bottom = 231.0
+
+[node name="Label" type="Label" parent="HBoxContainer/View/PanelContainer/ServerStatus/VBoxContainer/Device Communications"]
+margin_right = 746.0
+margin_bottom = 14.0
+text = "Device Communications"
+
+[node name="RichCheckBox" type="HBoxContainer" parent="HBoxContainer/View/PanelContainer/ServerStatus/VBoxContainer/Device Communications"]
+margin_top = 18.0
+margin_right = 746.0
+margin_bottom = 63.0
+
+[node name="CheckBox" type="CheckBox" parent="HBoxContainer/View/PanelContainer/ServerStatus/VBoxContainer/Device Communications/RichCheckBox"]
+margin_right = 24.0
+margin_bottom = 45.0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="HBoxContainer/View/PanelContainer/ServerStatus/VBoxContainer/Device Communications/RichCheckBox"]
+margin_left = 28.0
+margin_right = 746.0
+margin_bottom = 45.0
+size_flags_horizontal = 3
+bbcode_enabled = true
+bbcode_text = "[b]Bluetooth LE[/b]
+Connect to Bluetooth LE toys, including Lovense, WeVibe, Kiiroo, etc. This should be off on Windows 7/8, otherwise Intiface will crash."
+text = "Bluetooth LE
+Connect to Bluetooth LE toys, including Lovense, WeVibe, Kiiroo, etc. This should be off on Windows 7/8, otherwise Intiface will crash."
+fit_content_height = true
+scroll_active = false
+
+[node name="RichCheckBox2" type="HBoxContainer" parent="HBoxContainer/View/PanelContainer/ServerStatus/VBoxContainer/Device Communications"]
+margin_top = 67.0
+margin_right = 746.0
+margin_bottom = 97.0
+
+[node name="CheckBox" type="CheckBox" parent="HBoxContainer/View/PanelContainer/ServerStatus/VBoxContainer/Device Communications/RichCheckBox2"]
+margin_right = 24.0
+margin_bottom = 30.0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="HBoxContainer/View/PanelContainer/ServerStatus/VBoxContainer/Device Communications/RichCheckBox2"]
+margin_left = 28.0
+margin_right = 746.0
+margin_bottom = 30.0
+size_flags_horizontal = 3
+bbcode_enabled = true
+bbcode_text = "[b]XBox Compatible Gamepads[/b]
+Connect to XBox Compatible Gamepads (Windows Only)"
+text = "XBox Compatible Gamepads
+Connect to XBox Compatible Gamepads (Windows Only)"
+fit_content_height = true
+scroll_active = false
+
+[node name="Devices" type="ScrollContainer" parent="HBoxContainer/View/PanelContainer"]
+visible = false
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 753.0
+margin_bottom = 633.0
+script = SubResource( 7 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/View/PanelContainer/Devices"]
+margin_right = 746.0
+margin_bottom = 626.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/separation = 16
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/View/PanelContainer/Devices/VBoxContainer"]
+margin_right = 746.0
+margin_bottom = 20.0
+
+[node name="Scan" type="Button" parent="HBoxContainer/View/PanelContainer/Devices/VBoxContainer/HBoxContainer"]
+margin_right = 120.0
+margin_bottom = 20.0
+size_flags_horizontal = 0
+text = "Scan For Devices"
+
+[node name="Connect" type="Button" parent="HBoxContainer/View/PanelContainer/Devices/VBoxContainer/HBoxContainer"]
+margin_left = 124.0
+margin_right = 188.0
+margin_bottom = 20.0
+size_flags_horizontal = 0
+text = "Connect"
+
+[node name="Devices" type="VBoxContainer" parent="HBoxContainer/View/PanelContainer/Devices/VBoxContainer"]
+margin_top = 36.0
+margin_right = 746.0
+margin_bottom = 36.0
+
+[node name="Settings" type="ScrollContainer" parent="HBoxContainer/View/PanelContainer"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 753.0
+margin_bottom = 633.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/View/PanelContainer/Settings"]
+margin_right = 323.0
+margin_bottom = 449.0
+
+[node name="General" type="VBoxContainer" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer"]
+margin_right = 323.0
+margin_bottom = 261.0
+rect_min_size = Vector2( 0, 110 )
+
+[node name="Label" type="Label" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/General"]
+margin_right = 323.0
+margin_bottom = 14.0
+text = "General Writing"
+
+[node name="MaxVibe" type="HBoxContainer" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/General"]
+margin_top = 18.0
+margin_right = 323.0
+margin_bottom = 34.0
+
+[node name="Label" type="Label" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/General/MaxVibe"]
+margin_top = 1.0
+margin_right = 144.0
+margin_bottom = 15.0
+text = "Max Vibration Strength"
+
+[node name="HSlider" type="HSlider" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/General/MaxVibe"]
+margin_left = 148.0
+margin_right = 323.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 175, 0 )
+max_value = 1.0
+step = 0.01
+value = 0.35
+
+[node name="ChangeStrength" type="HBoxContainer" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/General"]
+margin_top = 38.0
+margin_right = 323.0
+margin_bottom = 54.0
+
+[node name="Label" type="Label" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/General/ChangeStrength"]
+margin_top = 1.0
+margin_right = 143.0
+margin_bottom = 15.0
+text = "Vibration Change         "
+
+[node name="HSlider" type="HSlider" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/General/ChangeStrength"]
+margin_left = 147.0
+margin_right = 322.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 175, 0 )
+min_value = 10.01
+max_value = 10.8
+step = 0.001
+value = 10.55
+
+[node name="UpSpeed" type="HBoxContainer" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/General"]
+margin_top = 58.0
+margin_right = 323.0
+margin_bottom = 74.0
+
+[node name="Label" type="Label" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/General/UpSpeed"]
+margin_top = 1.0
+margin_right = 142.0
+margin_bottom = 15.0
+text = "Vibration Gain Time    "
+
+[node name="HSlider" type="HSlider" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/General/UpSpeed"]
+margin_left = 146.0
+margin_right = 321.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 175, 0 )
+min_value = 1.0
+max_value = 450.0
+step = 0.05
+value = 170.0
+
+[node name="DownSpeed" type="HBoxContainer" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/General"]
+margin_top = 78.0
+margin_right = 323.0
+margin_bottom = 94.0
+
+[node name="Label" type="Label" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/General/DownSpeed"]
+margin_top = 1.0
+margin_right = 142.0
+margin_bottom = 15.0
+text = "Vibration Loss Time    "
+
+[node name="HSlider" type="HSlider" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/General/DownSpeed"]
+margin_left = 146.0
+margin_right = 321.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 175, 0 )
+min_value = 1.0
+max_value = 400.0
+step = 0.05
+value = 70.0
+
+[node name="Wave" type="HBoxContainer" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/General"]
+margin_top = 98.0
+margin_right = 323.0
+margin_bottom = 122.0
+
+[node name="Label" type="Label" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/General/Wave"]
+margin_top = 5.0
+margin_right = 138.0
+margin_bottom = 19.0
+text = "Sine Vibration Pattern"
+
+[node name="CheckBox" type="CheckBox" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/General/Wave"]
+margin_left = 142.0
+margin_right = 166.0
+margin_bottom = 24.0
+
+[node name="SineFreq" type="HBoxContainer" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/General"]
+margin_top = 126.0
+margin_right = 323.0
+margin_bottom = 142.0
+
+[node name="Label" type="Label" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/General/SineFreq"]
+margin_top = 1.0
+margin_right = 141.0
+margin_bottom = 15.0
+text = "Sine Frequency           "
+
+[node name="HSlider" type="HSlider" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/General/SineFreq"]
+margin_left = 145.0
+margin_right = 320.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 175, 0 )
+min_value = 0.1
+max_value = 5.0
+step = 0.2
+value = 1.0
+
+[node name="Desc" type="RichTextLabel" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/General"]
+margin_top = 146.0
+margin_right = 323.0
+margin_bottom = 261.0
+rect_min_size = Vector2( 0, 115 )
+bbcode_enabled = true
+bbcode_text = "Vibration change is how much vibration will change from writing. Gain and loss time affect how quickly vibration will increase or decrease as a result of writing. Increase gain time to cause slower vibration increase; increase loss time to cause slower vibration decay. Sine pattern applies a sine wave effect to all vibrations."
+text = "Vibration change is how much vibration will change from writing. Gain and loss time affect how quickly vibration will increase or decrease as a result of writing. Increase gain time to cause slower vibration increase; increase loss time to cause slower vibration decay. Sine pattern applies a sine wave effect to all vibrations."
+
+[node name="Milestone" type="VBoxContainer" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer"]
+margin_top = 265.0
+margin_right = 323.0
+margin_bottom = 355.0
+rect_min_size = Vector2( 0, 90 )
+
+[node name="Label" type="Label" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/Milestone"]
+margin_right = 323.0
+margin_bottom = 14.0
+text = "Milestones"
+
+[node name="Strength" type="HBoxContainer" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/Milestone"]
+margin_top = 18.0
+margin_right = 323.0
+margin_bottom = 34.0
+
+[node name="Label" type="Label" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/Milestone/Strength"]
+margin_top = 1.0
+margin_right = 114.0
+margin_bottom = 15.0
+text = "Vibration Strength"
+
+[node name="HSlider" type="HSlider" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/Milestone/Strength"]
+margin_left = 118.0
+margin_right = 293.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 175, 0 )
+max_value = 1.0
+step = 0.05
+value = 0.5
+
+[node name="Length" type="HBoxContainer" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/Milestone"]
+margin_top = 38.0
+margin_right = 323.0
+margin_bottom = 54.0
+
+[node name="Label" type="Label" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/Milestone/Length"]
+margin_top = 1.0
+margin_right = 112.0
+margin_bottom = 15.0
+text = "Vibration Length  "
+
+[node name="HSlider" type="HSlider" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/Milestone/Length"]
+margin_left = 116.0
+margin_right = 291.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 175, 0 )
+max_value = 20000.0
+step = 100.0
+value = 8000.0
+
+[node name="Completion" type="VBoxContainer" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer"]
+margin_top = 359.0
+margin_right = 323.0
+margin_bottom = 449.0
+rect_min_size = Vector2( 0, 90 )
+
+[node name="Label" type="Label" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/Completion"]
+margin_right = 323.0
+margin_bottom = 14.0
+text = "Complete Word Goal"
+
+[node name="Strength" type="HBoxContainer" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/Completion"]
+margin_top = 18.0
+margin_right = 323.0
+margin_bottom = 34.0
+
+[node name="Label" type="Label" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/Completion/Strength"]
+margin_top = 1.0
+margin_right = 114.0
+margin_bottom = 15.0
+text = "Vibration Strength"
+
+[node name="HSlider" type="HSlider" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/Completion/Strength"]
+margin_left = 118.0
+margin_right = 293.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 175, 0 )
+max_value = 1.0
+step = 0.1
+value = 0.9
+
+[node name="Length" type="HBoxContainer" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/Completion"]
+margin_top = 38.0
+margin_right = 323.0
+margin_bottom = 54.0
+
+[node name="Label" type="Label" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/Completion/Length"]
+margin_top = 1.0
+margin_right = 112.0
+margin_bottom = 15.0
+text = "Vibration Length  "
+
+[node name="HSlider" type="HSlider" parent="HBoxContainer/View/PanelContainer/Settings/VBoxContainer/Completion/Length"]
+margin_left = 116.0
+margin_right = 291.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 175, 0 )
+max_value = 20000.0
+step = 10.0
+value = 15000.0
+
+[connection signal="device_found" from="Client" to="HBoxContainer/View/PanelContainer/ServerStatus/VBoxContainer/Devices/DeviceList" method="_on_Client_device_found"]
+[connection signal="device_found" from="Client" to="HBoxContainer/View/PanelContainer/Devices" method="_on_Client_device_found"]
+[connection signal="device_removed" from="Client" to="HBoxContainer/View/PanelContainer/ServerStatus/VBoxContainer/Devices/DeviceList" method="_on_Client_device_removed"]
+[connection signal="device_removed" from="Client" to="HBoxContainer/View/PanelContainer/Devices" method="_on_Client_device_removed"]
+[connection signal="pressed" from="HBoxContainer/View/PanelContainer/ServerStatus/VBoxContainer/HBoxContainer/Connect" to="Client" method="_connect_to_server"]
+[connection signal="pressed" from="HBoxContainer/View/PanelContainer/Devices/VBoxContainer/HBoxContainer/Scan" to="Client" method="_scan"]
+[connection signal="pressed" from="HBoxContainer/View/PanelContainer/Devices/VBoxContainer/HBoxContainer/Connect" to="Client" method="_connect_to_server"]

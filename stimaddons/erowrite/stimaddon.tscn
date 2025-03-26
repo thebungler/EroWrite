@@ -1,0 +1,130 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://stimaddons/erowrite/addon-config.gd" type="Script" id=1]
+[ext_resource path="res://stimaddons/erowrite/stimaddon-main.gd" type="Script" id=2]
+[ext_resource path="res://stimaddons/erowrite/icon.png" type="Texture" id=3]
+[ext_resource path="res://stimaddons/erowrite/TestSignals.gd" type="Script" id=4]
+[ext_resource path="res://stimaddons/erowrite/DesktopClient/ButtUI.tscn" type="PackedScene" id=5]
+
+[sub_resource type="StyleBoxTexture" id=3]
+resource_local_to_scene = true
+texture = ExtResource( 3 )
+region_rect = Rect2( 0, 0, 96, 96 )
+modulate_color = Color( 1, 0.996078, 0.952941, 1 )
+
+[sub_resource type="StyleBoxTexture" id=1]
+resource_local_to_scene = true
+texture = ExtResource( 3 )
+region_rect = Rect2( 0, 0, 96, 96 )
+modulate_color = Color( 0.294118, 0.560784, 0.321569, 1 )
+
+[sub_resource type="StyleBoxTexture" id=2]
+resource_local_to_scene = true
+texture = ExtResource( 3 )
+region_rect = Rect2( 0, 0, 96, 96 )
+
+[sub_resource type="StyleBoxTexture" id=4]
+resource_local_to_scene = true
+texture = ExtResource( 3 )
+region_rect = Rect2( 0, 0, 96, 96 )
+modulate_color = Color( 0.215686, 0.215686, 0.215686, 0.541176 )
+
+[node name="erowrite" type="Control" groups=["StimAddons"]]
+script = ExtResource( 2 )
+
+[node name="ButtUI" parent="." instance=ExtResource( 5 )]
+margin_left = 134.0
+margin_top = 5.0
+margin_right = 757.0
+margin_bottom = 499.0
+
+[node name="AddonConfig" type="Node" parent="."]
+script = ExtResource( 1 )
+
+[node name="AddonBarIcon" type="Button" parent="."]
+margin_right = 12.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 70, 70 )
+hint_tooltip = "Example addon"
+custom_styles/hover = SubResource( 3 )
+custom_styles/pressed = SubResource( 1 )
+custom_styles/focus = SubResource( 2 )
+custom_styles/disabled = SubResource( 4 )
+custom_styles/normal = SubResource( 2 )
+
+[node name="WindowDialog" type="WindowDialog" parent="."]
+visible = true
+anchor_top = -0.072
+margin_left = 144.0
+margin_top = 223.0
+margin_right = 392.0
+margin_bottom = 496.0
+popup_exclusive = true
+window_title = "Debug Window"
+resizable = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="WindowDialog"]
+anchor_right = 1.0
+anchor_bottom = 0.78
+margin_left = 8.0
+margin_top = 8.0
+margin_right = -8.0
+margin_bottom = 0.159988
+rect_clip_content = true
+
+[node name="TypingStatus" type="Label" parent="WindowDialog/VBoxContainer"]
+margin_right = 232.0
+margin_bottom = 14.0
+text = "Testing... testing..."
+autowrap = true
+
+[node name="ProgressStatus" type="Label" parent="WindowDialog/VBoxContainer"]
+margin_top = 18.0
+margin_right = 232.0
+margin_bottom = 32.0
+text = "Testing... testing..."
+autowrap = true
+
+[node name="TestSignals" type="OptionButton" parent="WindowDialog"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = -96.0
+margin_right = -8.0
+margin_bottom = -76.0
+text = "~ choose test signal ~"
+clip_text = true
+items = [ "~ choose test signal ~", null, false, 0, null, "progress_milestone_reached", null, false, 1, null, "write_body_cleared", null, false, 2, null, "text_exported", null, false, 3, null, "text_copied", null, false, 4, null, "panel_state_changed", null, false, 5, null, "progress_bar_visibility_changed", null, false, 6, null, "fullscreen_state_changed", null, false, 7, null, "viewport_window_changed", null, false, 8, null, "word_count_goal_changed", null, false, 9, null, "theme_changed", null, false, 10, null, "background_state_changed", null, false, 11, null, "background_changed", null, false, 12, null, "font_changed", null, false, 13, null, "font_size_changed", null, false, 14, null, "typing_sound_changed", null, false, 15, null, "typing_volume_changed", null, false, 16, null, "soundscape_sound_changed", null, false, 17, null, "soundscape_volume_changed", null, false, 18, null, "typing_started", null, false, 19, null, "typing_ended", null, false, 20, null, "typing_idle", null, false, 21, null ]
+selected = 0
+script = ExtResource( 4 )
+
+[node name="Value1" type="LineEdit" parent="WindowDialog/TestSignals"]
+anchor_right = 0.48
+margin_top = 32.0
+margin_bottom = 56.0
+placeholder_text = "value_1"
+placeholder_alpha = 0.4
+
+[node name="Value2" type="LineEdit" parent="WindowDialog/TestSignals"]
+anchor_left = 0.56
+anchor_right = 1.0
+margin_top = 32.0
+margin_bottom = 56.0
+placeholder_text = "value_2"
+placeholder_alpha = 0.4
+
+[node name="ActivateSignal" type="Button" parent="WindowDialog/TestSignals"]
+anchor_right = 1.0
+margin_top = 64.0
+margin_bottom = 92.0
+text = "Activate signal"
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+
+[node name="VibeTimer" type="Timer" parent="."]
+wait_time = 9999.0
+
+[connection signal="pressed" from="AddonBarIcon" to="." method="_on_AddonBarIcon_pressed"]
+[connection signal="item_selected" from="WindowDialog/TestSignals" to="WindowDialog/TestSignals" method="_on_TestSignals_item_selected"]
+[connection signal="pressed" from="WindowDialog/TestSignals/ActivateSignal" to="WindowDialog/TestSignals" method="_on_ActivateSignal_pressed"]
