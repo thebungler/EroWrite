@@ -1,4 +1,4 @@
-# EroWrite
+# ![The EroWrite icon.](https://raw.githubusercontent.com/thebungler/EroWrite/refs/heads/main/icon.png) EroWrite
  An addon for [Stimuwrite 2](https://thatclowngoddess.itch.io/stimuwrite) which adds buttplug.io support.
 
 Based off of the [Stimuwrite Example Addon](https://github.com/beastly-eve/stimuwrite-example-addon) and leverages [Godot.Buttplug](https://github.com/erodozer/Godot.Buttplug) by [Erodozer](https://github.com/erodozer) for pretty much all of its functionality.
